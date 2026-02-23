@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Chatbot - Real AI</title>
+    <title>Real AI Chatbot</title>
     <style>
         * {
             margin: 0;
@@ -49,18 +49,20 @@
             gap: 10px;
         }
 
-        .model-selector {
+        .controls {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             align-items: center;
         }
 
-        .model-selector label {
+        .controls label {
             color: white;
             font-weight: 600;
+            font-size: 14px;
         }
 
-        .model-selector select {
+        .controls select,
+        .controls input {
             padding: 8px 12px;
             border: none;
             border-radius: 5px;
@@ -215,30 +217,6 @@
             }
         }
 
-        .error-message {
-            background: #ffe0e0;
-            color: #d32f2f;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            border-left: 4px solid #d32f2f;
-        }
-
-        .connection-status {
-            font-size: 12px;
-            padding: 5px 10px;
-            border-radius: 5px;
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .connection-status.connected {
-            background: #4caf50;
-        }
-
-        .connection-status.disconnected {
-            background: #f44336;
-        }
-
         @media (max-width: 768px) {
             .message-content {
                 max-width: 90%;
@@ -249,12 +227,13 @@
                 gap: 10px;
             }
 
-            .model-selector {
+            .controls {
                 width: 100%;
                 flex-direction: column;
             }
 
-            .model-selector select {
+            .controls select,
+            .controls input {
                 width: 100%;
             }
         }
@@ -264,15 +243,14 @@
     <div class="container">
         <div class="header">
             <h1>🤖 Real AI Chatbot</h1>
-            <div class="model-selector">
-                <label for="model-select">AI Model:</label>
-                <select id="model-select" onchange="changeModel()">
-                    <option value="llama2">Llama 2</option>
-                    <option value="mistral">Mistral</option>
-                    <option value="neural-chat">Neural Chat</option>
-                    <option value="starling-lm">Starling LM</option>
-                </select>
-                <div class="connection-status" id="connection-status">Checking...</div>
+            <div class="controls">
+                <label for="api-key">API Key (optional):</label>
+                <input 
+                    type="text" 
+                    id="api-key" 
+                    placeholder="Leave blank for free demo"
+                    style="width: 200px;"
+                >
             </div>
         </div>
 
@@ -280,7 +258,9 @@
             <div class="message ai">
                 <div class="message-avatar">🤖</div>
                 <div class="message-content">
-                    Hi! I'm a real AI chatbot powered by Ollama. I can have natural conversations with you on any topic. Make sure Ollama is running on your computer for me to work properly.
+                    Hi! I'm a real AI chatbot powered by Hugging Face. I can have natural conversations with you on any topic. Just type your message and I'll respond!
+
+Note: The free version has rate limits. For unlimited use, you can paste your Hugging Face API key above (get one free at huggingface.co).
                 </div>
             </div>
         </div>
@@ -297,98 +277,104 @@
     </div>
 
     <script>
-        let currentModel = 'llama2';
-        const OLLAMA_API = 'http://localhost:11434/api/chat';
-        let isConnected = false;
-
-        // Check connection on load
-        window.addEventListener('load', checkConnection);
-
-        async function checkConnection() {
-            try {
-                const response = await fetch('http://localhost:11434/api/tags');
-                if (response.ok) {
-                    isConnected = true;
-                    updateConnectionStatus(true);
-                } else {
-                    updateConnectionStatus(false);
-                }
-            } catch (error) {
-                console.log('Ollama not running');
-                updateConnectionStatus(false);
-            }
-        }
-
-        function updateConnectionStatus(connected) {
-            const status = document.getElementById('connection-status');
-            if (connected) {
-                status.textContent = '✓ Connected';
-                status.className = 'connection-status connected';
-            } else {
-                status.textContent = '✗ Disconnected';
-                status.className = 'connection-status disconnected';
-                addMessage('⚠️ Ollama is not running. Please start Ollama on your computer first.', 'ai');
-            }
-        }
-
-        function changeModel() {
-            currentModel = document.getElementById('model-select').value;
-            addMessage(`Model changed to ${currentModel}. Ready to chat!`, 'ai');
-        }
+        const HUGGING_FACE_API = 'https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.1/v1/messages';
+        
+        // Store conversation history for context
+        let conversationHistory = [];
 
         async function sendMessage() {
-            if (!isConnected) {
-                addMessage('❌ Connection error: Ollama is not running. Start Ollama and refresh the page.', 'ai');
-                return;
-            }
-
             const input = document.getElementById('user-input');
             const message = input.value.trim();
+            const apiKey = document.getElementById('api-key').value.trim();
 
             if (!message) return;
 
-            // Add user message
+            // Add user message to chat
             addMessage(message, 'user');
+            conversationHistory.push({
+                role: 'user',
+                content: message
+            });
             input.value = '';
 
             // Show typing indicator
             showTypingIndicator();
 
             try {
-                // Call Ollama API
-                const response = await fetch(OLLAMA_API, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        model: currentModel,
-                        messages: [
-                            {
-                                role: 'user',
-                                content: message
+                // Prepare messages for API
+                const messages = conversationHistory.slice(-10); // Keep last 10 messages for context
+
+                // Use free public inference if no API key
+                let response;
+                
+                if (apiKey) {
+                    // Use Hugging Face with API key
+                    response = await fetch(HUGGING_FACE_API, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${apiKey}`,
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            model: 'mistralai/Mistral-7B-Instruct-v0.1',
+                            messages: messages,
+                            max_tokens: 512,
+                            temperature: 0.7
+                        })
+                    });
+                } else {
+                    // Use free Hugging Face Spaces API (no key needed)
+                    response = await fetch('https://api-inference.huggingface.co/models/gpt2', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            inputs: message,
+                            parameters: {
+                                max_new_tokens: 250
                             }
-                        ],
-                        stream: false
-                    })
-                });
+                        })
+                    });
+                }
 
                 removeTypingIndicator();
 
                 if (!response.ok) {
-                    throw new Error('API Error: ' + response.statusText);
+                    if (response.status === 429) {
+                        addMessage('⏳ Rate limited (free tier). Please wait a moment and try again, or add your free Hugging Face API key for unlimited access.', 'ai');
+                    } else {
+                        throw new Error(`API Error: ${response.status}`);
+                    }
+                    return;
                 }
 
                 const data = await response.json();
-                const aiResponse = data.message.content;
+                let aiResponse;
+
+                // Parse response based on which API was used
+                if (apiKey) {
+                    aiResponse = data.choices?.[0]?.message?.content || 'No response received';
+                } else {
+                    // GPT2 response format
+                    aiResponse = data[0]?.generated_text || 'No response received';
+                    // Clean up duplicate input from GPT2 response
+                    if (aiResponse.startsWith(message)) {
+                        aiResponse = aiResponse.substring(message.length).trim();
+                    }
+                }
 
                 // Add AI response
                 addMessage(aiResponse, 'ai');
+                conversationHistory.push({
+                    role: 'assistant',
+                    content: aiResponse
+                });
 
             } catch (error) {
                 removeTypingIndicator();
                 console.error('Error:', error);
-                addMessage(`❌ Error: ${error.message}\n\nMake sure Ollama is running with: ollama serve`, 'ai');
+                addMessage(`❌ Error: ${error.message}\n\nTip: For better responses, get a free API key from huggingface.co and paste it in the API Key field.`, 'ai');
             }
         }
 
@@ -443,9 +429,6 @@
                 sendMessage();
             }
         }
-
-        // Check connection periodically
-        setInterval(checkConnection, 5000);
 
         document.getElementById('user-input').focus();
     </script>
