@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudyMate AI - Your Personal Tutor</title>
+    <title>AI Chatbot - Real AI</title>
     <style>
         * {
             margin: 0;
@@ -29,114 +29,42 @@
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             display: flex;
             overflow: hidden;
-            height: 80vh;
-        }
-
-        .container.training-mode {
+            height: 85vh;
             flex-direction: column;
-            height: auto;
-            min-height: 80vh;
         }
 
-        .sidebar {
-            width: 25%;
-            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+        .header {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 30px 20px;
-            overflow-y: auto;
+            padding: 20px 30px;
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .logo {
+        .header h1 {
             font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 30px;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .logo-icon {
-            font-size: 30px;
-        }
-
-        .train-button-section {
-            margin-bottom: 20px;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .train-btn {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 14px;
-            transition: all 0.3s ease;
+        .model-selector {
             display: flex;
+            gap: 10px;
             align-items: center;
-            justify-content: center;
-            gap: 8px;
         }
 
-        .train-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(245, 87, 108, 0.4);
+        .model-selector label {
+            color: white;
+            font-weight: 600;
         }
 
-        .train-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .menu {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            flex: 1;
-        }
-
-        .menu-item {
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-
-        .menu-item:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateX(5px);
-        }
-
-        .menu-item.active {
-            background: rgba(255, 255, 255, 0.3);
-            border-color: white;
-        }
-
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .header {
-            background: linear-gradient(90deg, #f5f7fa 0%, #c3cfe2 100%);
-            padding: 20px 30px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .header h1 {
-            color: #333;
-            font-size: 24px;
+        .model-selector select {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
         }
 
         .chat-area {
@@ -152,7 +80,6 @@
         .message {
             display: flex;
             gap: 15px;
-            margin-bottom: 15px;
             animation: slideIn 0.3s ease;
         }
 
@@ -198,6 +125,7 @@
             border-radius: 12px;
             line-height: 1.6;
             word-wrap: break-word;
+            white-space: pre-wrap;
         }
 
         .message.ai .message-content {
@@ -211,27 +139,10 @@
             color: white;
         }
 
-        .code-block {
-            background: #2d2d2d;
-            color: #f8f8f2;
-            padding: 15px;
-            border-radius: 8px;
-            font-family: 'Courier New', monospace;
-            overflow-x: auto;
-            margin: 10px 0;
-            font-size: 13px;
-        }
-
         .input-area {
             padding: 20px 30px;
             border-top: 1px solid #e0e0e0;
             background: white;
-            display: flex;
-            gap: 10px;
-        }
-
-        .input-wrapper {
-            flex: 1;
             display: flex;
             gap: 10px;
         }
@@ -259,7 +170,7 @@
             cursor: pointer;
             font-size: 14px;
             font-weight: 600;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: all 0.3s ease;
         }
 
         button:hover {
@@ -267,14 +178,9 @@
             box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
         }
 
-        button:active {
-            transform: translateY(0);
-        }
-
-        .clear-btn {
-            padding: 8px 15px;
-            font-size: 12px;
-            background: #ff6b6b;
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         .typing-indicator {
@@ -309,992 +215,181 @@
             }
         }
 
-        .mode-selector {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .mode-btn {
-            padding: 8px 15px;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 2px solid transparent;
+        .error-message {
+            background: #ffe0e0;
+            color: #d32f2f;
+            padding: 15px;
             border-radius: 8px;
-            cursor: pointer;
+            margin: 15px 0;
+            border-left: 4px solid #d32f2f;
+        }
+
+        .connection-status {
             font-size: 12px;
-            transition: all 0.3s ease;
-        }
-
-        .mode-btn.active {
-            background: rgba(255, 255, 255, 0.3);
-            border-color: white;
-        }
-
-        /* Training Screen Styles */
-        .training-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.95);
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-
-        .training-overlay.active {
-            display: flex;
-        }
-
-        .training-content {
-            background: white;
-            border-radius: 20px;
-            padding: 50px;
-            max-width: 600px;
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        .training-header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .training-icon {
-            font-size: 50px;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.1);
-            }
-        }
-
-        .training-header h2 {
-            font-size: 32px;
-            color: #333;
-            margin: 0;
-        }
-
-        .training-status {
-            margin: 30px 0;
-            font-size: 18px;
-            color: #666;
-        }
-
-        .training-bar {
-            width: 100%;
-            height: 30px;
-            background: #e0e0e0;
-            border-radius: 15px;
-            overflow: hidden;
-            margin: 20px 0;
-        }
-
-        .training-progress {
-            height: 100%;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-            width: 0%;
-            transition: width 0.5s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 12px;
-        }
-
-        .learning-topics {
-            margin: 30px 0;
-            text-align: left;
-            background: #f5f5f5;
-            padding: 20px;
-            border-radius: 10px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .learning-item {
-            padding: 10px;
-            margin: 5px 0;
-            background: white;
+            padding: 5px 10px;
             border-radius: 5px;
-            border-left: 4px solid #667eea;
-            animation: slideIn 0.3s ease;
+            background: rgba(255, 255, 255, 0.2);
         }
 
-        .learning-item.completed {
-            border-left-color: #2ecc71;
+        .connection-status.connected {
+            background: #4caf50;
         }
 
-        .learning-item.completed::before {
-            content: "✓ ";
-            color: #2ecc71;
-            font-weight: bold;
-        }
-
-        .training-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 30px;
-        }
-
-        .stop-btn {
-            padding: 15px 40px;
-            background: #ff6b6b;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .stop-btn:hover {
-            background: #ff5252;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
-        }
-
-        .back-btn {
-            padding: 15px 40px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .back-btn:hover {
-            background: #764ba2;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .training-stats {
-            margin: 20px 0;
-            font-size: 14px;
-            color: #999;
+        .connection-status.disconnected {
+            background: #f44336;
         }
 
         @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-                height: auto;
-                min-height: 100vh;
-            }
-
-            .sidebar {
-                width: 100%;
-                padding: 20px;
-            }
-
             .message-content {
                 max-width: 90%;
             }
+            
+            .header {
+                flex-direction: column;
+                gap: 10px;
+            }
 
-            .training-content {
-                padding: 30px;
-                margin: 20px;
+            .model-selector {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .model-selector select {
+                width: 100%;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container" id="main-container">
-        <div class="sidebar">
-            <div class="logo">
-                <span class="logo-icon">🎓</span>
-                <span>StudyMate</span>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Real AI Chatbot</h1>
+            <div class="model-selector">
+                <label for="model-select">AI Model:</label>
+                <select id="model-select" onchange="changeModel()">
+                    <option value="llama2">Llama 2</option>
+                    <option value="mistral">Mistral</option>
+                    <option value="neural-chat">Neural Chat</option>
+                    <option value="starling-lm">Starling LM</option>
+                </select>
+                <div class="connection-status" id="connection-status">Checking...</div>
             </div>
-
-            <div class="train-button-section">
-                <button class="train-btn" id="train-btn" onclick="startTraining()">
-                    <span>🌐</span>
-                    <span>Train from Internet</span>
-                </button>
-            </div>
-
-            <div class="mode-selector">
-                <button class="mode-btn active" onclick="setMode('general')">📚 General</button>
-                <button class="mode-btn" onclick="setMode('math')">🔢 Math</button>
-                <button class="mode-btn" onclick="setMode('code')">💻 Code</button>
-            </div>
-
-            <div class="menu">
-                <div class="menu-item active" onclick="selectTopic('homework')">
-                    📝 Homework Help
-                </div>
-                <div class="menu-item" onclick="selectTopic('explain')">
-                    💡 Explain Concepts
-                </div>
-                <div class="menu-item" onclick="selectTopic('practice')">
-                    🎯 Practice Problems
-                </div>
-                <div class="menu-item" onclick="selectTopic('code')">
-                    🐛 Debug Code
-                </div>
-                <div class="menu-item" onclick="selectTopic('essay')">
-                    ✍️ Essay Guidance
-                </div>
-            </div>
-
-            <button class="clear-btn" onclick="clearChat()" style="margin-top: auto;">
-                🗑️ Clear Chat
-            </button>
         </div>
 
-        <div class="main-content">
-            <div class="header">
-                <h1 id="header-title">📚 Homework Help</h1>
-            </div>
-
-            <div class="chat-area" id="chat-area">
-                <div class="message ai">
-                    <div class="message-avatar">🤖</div>
-                    <div class="message-content">
-                        Hello! I'm StudyMate, your AI tutor. I'm here to help with homework, explain concepts, debug code, and guide you through problems. Click "Train from Internet" to enhance my knowledge! What would you like help with today?
-                    </div>
-                </div>
-            </div>
-
-            <div class="input-area">
-                <div class="input-wrapper">
-                    <input 
-                        type="text" 
-                        id="user-input" 
-                        placeholder="Ask me anything... (e.g., 'Explain photosynthesis', 'Help with Python')"
-                        onkeypress="handleKeyPress(event)"
-                    >
-                    <button onclick="sendMessage()">Send</button>
+        <div class="chat-area" id="chat-area">
+            <div class="message ai">
+                <div class="message-avatar">🤖</div>
+                <div class="message-content">
+                    Hi! I'm a real AI chatbot powered by Ollama. I can have natural conversations with you on any topic. Make sure Ollama is running on your computer for me to work properly.
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Training Overlay -->
-    <div class="training-overlay" id="training-overlay">
-        <div class="training-content">
-            <div class="training-header">
-                <div class="training-icon">🧠</div>
-                <h2>AI Learning</h2>
-            </div>
-
-            <div class="training-status">
-                <p id="training-status-text">Connecting to internet and learning...</p>
-            </div>
-
-            <div class="training-bar">
-                <div class="training-progress" id="training-progress">0%</div>
-            </div>
-
-            <div class="learning-topics" id="learning-topics">
-                <!-- Topics will be added here dynamically -->
-            </div>
-
-            <div class="training-stats">
-                <p>Topics learned: <strong id="topics-count">0</strong> / <strong id="topics-total">20</strong></p>
-                <p>Time remaining: <strong id="time-remaining">--:--</strong></p>
-            </div>
-
-            <div class="training-buttons">
-                <button class="stop-btn" onclick="stopTraining()">🛑 Stop Learning</button>
-                <button class="back-btn" id="back-btn" onclick="goBack()" style="display: none;">← Go Back</button>
-            </div>
+        <div class="input-area">
+            <input 
+                type="text" 
+                id="user-input" 
+                placeholder="Ask me anything..."
+                onkeypress="handleKeyPress(event)"
+            >
+            <button onclick="sendMessage()">Send</button>
         </div>
     </div>
 
     <script>
-        // AI Knowledge Base
-        const aiKnowledge = {
-            math: {
-                keywords: ['algebra', 'geometry', 'calculus', 'trigonometry', 'equation', 'formula', 'solve', 'derivative', 'integral', 'matrix', 'vector'],
-                responses: {
-                    algebra: `Algebra is about finding unknown values using mathematical operations.
-
-Key concepts:
-- Variables (x, y, z) represent unknown values
-- Equations show that two expressions are equal
-- Operations must be done on both sides equally
-
-Example: 2x + 5 = 13
-Step 1: Subtract 5 from both sides → 2x = 8
-Step 2: Divide both sides by 2 → x = 4
-
-Tips:
-✓ Always do the same operation on both sides
-✓ Simplify before solving
-✓ Check your answer by substituting back`,
-                    
-                    geometry: `Geometry deals with shapes, sizes, and properties of figures.
-
-Basic shapes:
-- Triangle: 3 sides, angles sum to 180°
-- Square: 4 equal sides, all angles 90°
-- Circle: Curved line, all points equidistant from center
-
-Important formulas:
-- Rectangle area: length × width
-- Triangle area: (base × height) ÷ 2
-- Circle area: πr²
-
-Key terms:
-• Perimeter: distance around a shape
-• Area: space inside a shape
-• Volume: space inside a 3D object`,
-
-                    calculus: `Calculus studies change and motion using derivatives and integrals.
-
-Derivatives:
-- Show how fast something is changing
-- Slope of a curve at a point
-- Symbol: dy/dx or f'(x)
-
-Integrals:
-- Opposite of derivatives
-- Find area under curves
-- Symbol: ∫
-
-Common rules:
-- Power rule: d/dx(x^n) = nx^(n-1)
-- Sum rule: d/dx(f+g) = f' + g'`,
-
-                    trigonometry: `Trigonometry studies triangles and angles.
-
-Main functions (SOH-CAH-TOA):
-- Sine (sin): opposite/hypotenuse
-- Cosine (cos): adjacent/hypotenuse
-- Tangent (tan): opposite/adjacent
-
-Key angles:
-- 30°, 45°, 60° are commonly used
-- sin(30°) = 0.5, cos(60°) = 0.5
-
-Applications:
-• Finding missing sides
-• Calculating angles
-• Modeling waves and cycles`
-                }
-            },
-
-            science: {
-                keywords: ['biology', 'chemistry', 'physics', 'photosynthesis', 'atom', 'reaction', 'force', 'energy', 'ecosystem', 'cell'],
-                responses: {
-                    biology: `Biology is the study of living organisms and life processes.
-
-Main branches:
-- Botany: Plants
-- Zoology: Animals
-- Microbiology: Microorganisms
-- Ecology: Organisms and environment
-
-Key concepts:
-• Cells: Basic unit of life
-• DNA: Carries genetic information
-• Photosynthesis: Plants convert light to energy
-• Evolution: Species change over time
-
-Cell types:
-- Prokaryotic: No nucleus (bacteria)
-- Eukaryotic: Has nucleus (plants, animals)`,
-
-                    chemistry: `Chemistry studies matter and reactions between substances.
-
-Atoms & Molecules:
-- Atoms: Smallest unit of element
-- Molecules: Atoms bonded together
-- Elements: Pure substances (Periodic Table)
-
-Chemical Reactions:
-- Breaking and forming bonds
-- Types: Combustion, synthesis, decomposition
-- Shown with equations (reactants → products)
-
-States of matter:
-- Solid: Fixed shape and volume
-- Liquid: Fixed volume, takes container shape
-- Gas: No fixed shape or volume`,
-
-                    physics: `Physics explains how the universe works.
-
-Core concepts:
-- Motion: Position changing over time
-- Force: Push or pull on an object
-- Energy: Ability to do work
-- Waves: Disturbances that travel
-
-Newton's Laws:
-1. Objects at rest stay at rest (inertia)
-2. F = ma (force = mass × acceleration)
-3. Every action has equal, opposite reaction
-
-Types of energy:
-• Kinetic: Energy of motion
-• Potential: Energy of position
-• Heat, Light, Sound, Electrical`
-                }
-            },
-
-            languages: {
-                keywords: ['essay', 'grammar', 'vocabulary', 'writing', 'paragraph', 'thesis', 'literature', 'poetry'],
-                responses: {
-                    essay: `Essay writing structure:
-
-Introduction:
-- Hook: Grab attention with a question or fact
-- Background: Give context
-- Thesis: Main argument (1-2 sentences)
-
-Body paragraphs (3-5):
-- Topic sentence: Main idea of paragraph
-- Evidence: Facts, quotes, examples
-- Analysis: Explain why evidence matters
-- Transition: Connect to next paragraph
-
-Conclusion:
-- Restate thesis in new words
-- Summarize main points
-- End with impact (future implications, call to action)
-
-Tips for strong writing:
-✓ Use clear, active language
-✓ Vary sentence length
-✓ Show, don't tell
-✓ Proofread carefully`,
-
-                    grammar: `Common grammar rules:
-
-Subject-Verb Agreement:
-- Singular subject needs singular verb
-- Plural subject needs plural verb
-- Example: "She IS" (singular), "They ARE" (plural)
-
-Tenses:
-- Present: happening now (I walk)
-- Past: happened before (I walked)
-- Future: will happen (I will walk)
-
-Common mistakes:
-- Its (possessive) vs. It's (it is)
-- Their vs. There vs. They're
-- Your vs. You're
-- Affect (verb) vs. Effect (noun)
-
-Punctuation:
-• Period: End of sentence
-• Comma: Separate ideas, pause
-• Semicolon: Connect related sentences
-• Colon: Introduce list or explanation`,
-
-                    vocabulary: `Building vocabulary:
-
-Root words help unlock meanings:
-- "Bio" = life (biography, biology)
-- "Geo" = earth (geography, geology)
-- "Phon" = sound (telephone, symphony)
-- "Port" = carry (transport, important)
-- "Scrib/Script" = write (describe, prescription)
-
-Prefixes (at start):
-- UN- : not, opposite (unhappy)
-- RE- : again (redo)
-- PRE- : before (preview)
-- OVER- : too much (overeat)
-
-Suffixes (at end):
-- -ED: past tense
-- -ING: ongoing action
-- -LY: makes adverb (quickly)
-- -TION: process or state (creation)
-
-Learning tips:
-✓ Learn in context, not isolation
-✓ Use word in sentences
-✓ Review frequently
-✓ Read widely`
-                }
-            },
-
-            programming: {
-                keywords: ['python', 'javascript', 'java', 'code', 'function', 'loop', 'variable', 'bug', 'error', 'syntax', 'algorithm'],
-                responses: {
-                    python: `Python Basics:
-
-Variables:
-x = 5           # integer
-name = "John"   # string
-items = [1,2,3] # list
-
-Data Types:
-- int: whole numbers
-- float: decimal numbers
-- str: text
-- bool: True or False
-- list: ordered collection
-- dict: key-value pairs
-
-Control Flow:
-if condition:
-    # do this
-elif other_condition:
-    # do this
-else:
-    # do this
-
-Loops:
-for i in range(5):    # repeat 5 times
-    print(i)
-
-while condition:      # repeat while true
-    # do this
-
-Functions:
-def greet(name):
-    return f"Hello, {name}!"
-
-Common errors:
-- IndentationError: Wrong spacing
-- NameError: Variable doesn't exist
-- TypeError: Wrong data type
-- IndexError: Index out of range`,
-
-                    javascript: `JavaScript Basics:
-
-Variables:
-let x = 5;
-const name = "John";
-var old_style = 10;
-
-Data Types:
-- number: 42, 3.14
-- string: "text"
-- boolean: true, false
-- array: [1, 2, 3]
-- object: {key: "value"}
-
-Control Flow:
-if (condition) {
-    // do this
-} else {
-    // do this
-}
-
-Loops:
-for (let i = 0; i < 5; i++) {
-    console.log(i);
-}
-
-while (condition) {
-    // do this
-}
-
-Functions:
-function greet(name) {
-    return "Hello, " + name;
-}
-
-Arrow function:
-const add = (a, b) => a + b;
-
-DOM Manipulation:
-document.getElementById("id").innerHTML = "text";
-element.addEventListener("click", function);`,
-
-                    debugging: `Debugging Tips:
-
-1. Read the error message carefully
-   - Shows file and line number
-   - Describes what went wrong
-
-2. Common errors:
-   - SyntaxError: Typo in code
-   - ReferenceError: Variable undefined
-   - TypeError: Wrong operation
-   - LogicError: Code runs but gives wrong result
-
-3. Debugging techniques:
-   - Add print/console.log statements
-   - Check variable values
-   - Test small pieces separately
-   - Use debugger tools in browser
-
-4. Prevention:
-   - Test often
-   - Use descriptive variable names
-   - Comment complex code
-   - Keep functions small`
-                }
-            },
-
-            general: {
-                keywords: ['hello', 'hi', 'help', 'what', 'how', 'why', 'explain', 'tell me'],
-                responses: {
-                    general: `I'm StudyMate, your AI tutor! I can help you with:
-
-📚 Academic Subjects:
-- Math (algebra, geometry, calculus, etc.)
-- Science (biology, chemistry, physics)
-- Languages (grammar, writing, vocabulary)
-- History, Geography, and more
-
-💻 Programming:
-- Python, JavaScript, Java, and more
-- Debugging code
-- Understanding algorithms
-- Project guidance
-
-✍️ Writing Help:
-- Essay structure and guidance
-- Grammar and punctuation
-- Vocabulary building
-- Formatting tips
-
-🎯 Learning Methods:
-- Explaining difficult concepts
-- Practice problems
-- Study techniques
-- Test preparation
-
-How to get the best help:
-1. Be specific with your question
-2. Share what you've already tried
-3. Ask for step-by-step explanations
-4. Request examples
-
-Try asking me:
-- "Explain photosynthesis"
-- "How do I solve quadratic equations?"
-- "Help me debug this Python code"
-- "What's the structure of an essay?"`
-                }
-            }
-        };
-
-        // Training Topics Database
-        const trainingTopics = [
-            "🧮 Advanced Algebra Techniques",
-            "📐 Computational Geometry",
-            "🔬 Quantum Physics Basics",
-            "🧬 Molecular Biology",
-            "⚗️ Organic Chemistry",
-            "🌍 Environmental Science",
-            "📚 Literary Analysis Methods",
-            "✍️ Creative Writing Styles",
-            "🐍 Python Web Development",
-            "⚙️ Advanced JavaScript Features",
-            "🔐 Cybersecurity Fundamentals",
-            "📊 Data Science & Statistics",
-            "🎓 Philosophy & Ethics",
-            "💼 Economics Principles",
-            "🗣️ Language Learning Tips",
-            "🎨 Art History & Criticism",
-            "🎵 Music Theory",
-            "⚡ Electrical Engineering",
-            "🏗️ Engineering Structures",
-            "🌌 Astronomy & Space Science"
-        ];
-
-        let currentMode = 'general';
-        let currentTopic = 'homework';
-        let chatHistory = [];
-        let isTraining = false;
-        let trainingProgress = 0;
-        let trainedTopics = [];
-
-        function setMode(mode) {
-            currentMode = mode;
-            document.querySelectorAll('.mode-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-        }
-
-        function selectTopic(topic) {
-            currentTopic = topic;
-            document.querySelectorAll('.menu-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            event.target.classList.add('active');
-
-            const titles = {
-                homework: '📝 Homework Help',
-                explain: '💡 Explain Concepts',
-                practice: '🎯 Practice Problems',
-                code: '🐛 Debug Code',
-                essay: '✍️ Essay Guidance'
-            };
-
-            document.getElementById('header-title').textContent = titles[topic];
-        }
-
-        function startTraining() {
-            isTraining = true;
-            trainingProgress = 0;
-            trainedTopics = [];
-            
-            // Show training overlay
-            document.getElementById('training-overlay').classList.add('active');
-            document.getElementById('train-btn').disabled = true;
-            
-            // Simulate learning
-            simulateTraining();
-        }
-
-        function simulateTraining() {
-            const totalTime = 15000; // 15 seconds total
-            const topicLearningTime = totalTime / trainingTopics.length;
-            let topicIndex = 0;
-
-            const trainingInterval = setInterval(() => {
-                if (!isTraining) {
-                    clearInterval(trainingInterval);
-                    return;
-                }
-
-                if (topicIndex < trainingTopics.length) {
-                    // Add topic to trained list
-                    trainedTopics.push(trainingTopics[topicIndex]);
-                    updateTrainingUI();
-                    
-                    topicIndex++;
-                    
-                    // Calculate progress
-                    trainingProgress = (topicIndex / trainingTopics.length) * 100;
-                    
-                    // Update progress bar
-                    document.getElementById('training-progress').style.width = trainingProgress + '%';
-                    document.getElementById('training-progress').textContent = Math.round(trainingProgress) + '%';
-                    
-                    // Update counters
-                    document.getElementById('topics-count').textContent = topicIndex;
-                    document.getElementById('topics-total').textContent = trainingTopics.length;
-                    
-                    // Update time remaining
-                    const timeLeft = Math.max(0, totalTime - (topicIndex * topicLearningTime));
-                    const seconds = Math.ceil(timeLeft / 1000);
-                    const mins = Math.floor(seconds / 60);
-                    const secs = seconds % 60;
-                    document.getElementById('time-remaining').textContent = 
-                        `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        let currentModel = 'llama2';
+        const OLLAMA_API = 'http://localhost:11434/api/chat';
+        let isConnected = false;
+
+        // Check connection on load
+        window.addEventListener('load', checkConnection);
+
+        async function checkConnection() {
+            try {
+                const response = await fetch('http://localhost:11434/api/tags');
+                if (response.ok) {
+                    isConnected = true;
+                    updateConnectionStatus(true);
                 } else {
-                    clearInterval(trainingInterval);
-                    completeTraining();
+                    updateConnectionStatus(false);
                 }
-            }, topicLearningTime);
-        }
-
-        function updateTrainingUI() {
-            const learningTopics = document.getElementById('learning-topics');
-            const newItem = document.createElement('div');
-            newItem.className = 'learning-item completed';
-            newItem.textContent = trainedTopics[trainedTopics.length - 1];
-            learningTopics.appendChild(newItem);
-            learningTopics.scrollTop = learningTopics.scrollHeight;
-        }
-
-        function completeTraining() {
-            isTraining = false;
-            
-            // Update UI
-            document.getElementById('training-status-text').textContent = 
-                '✅ Training Complete! AI knowledge enhanced!';
-            document.getElementById('training-progress').style.width = '100%';
-            document.getElementById('training-progress').textContent = '100%';
-            document.getElementById('time-remaining').textContent = '00:00';
-            
-            // Show back button, hide stop button
-            document.querySelector('.stop-btn').style.display = 'none';
-            document.getElementById('back-btn').style.display = 'block';
-            
-            // Add trained topics to knowledge base
-            addTrainedKnowledge();
-            
-            // Show success message
-            setTimeout(() => {
-                addMessage('🎉 Great! I\'ve completed my internet training! My knowledge base has been significantly expanded. I can now provide more detailed explanations on a wider range of topics. Feel free to ask me anything!', 'ai');
-            }, 500);
-        }
-
-        function addTrainedKnowledge() {
-            // Add trained topics to the AI's knowledge base
-            aiKnowledge.trained = {
-                keywords: trainingTopics.map(t => t.toLowerCase()),
-                responses: {
-                    trained: `I've recently trained on these advanced topics:
-${trainedTopics.map(t => '• ' + t).join('\n')}
-
-My knowledge has been significantly enhanced! I can now provide more detailed and comprehensive answers on these subjects. Feel free to ask me questions about any of these topics!`
-                }
-            };
-        }
-
-        function stopTraining() {
-            if (confirm('Stop AI training? Progress will be lost.')) {
-                isTraining = false;
-                
-                // Reset UI
-                document.getElementById('training-overlay').classList.remove('active');
-                document.getElementById('train-btn').disabled = false;
-                document.querySelector('.stop-btn').style.display = 'block';
-                document.getElementById('back-btn').style.display = 'none';
-                
-                // Reset variables
-                trainingProgress = 0;
-                trainedTopics = [];
-                document.getElementById('training-progress').style.width = '0%';
-                document.getElementById('training-progress').textContent = '0%';
-                document.getElementById('learning-topics').innerHTML = '';
-                document.getElementById('topics-count').textContent = '0';
-                document.getElementById('time-remaining').textContent = '--:--';
-                document.getElementById('training-status-text').textContent = 
-                    'Connecting to internet and learning...';
+            } catch (error) {
+                console.log('Ollama not running');
+                updateConnectionStatus(false);
             }
         }
 
-        function goBack() {
-            // Close training overlay
-            document.getElementById('training-overlay').classList.remove('active');
-            document.getElementById('train-btn').disabled = false;
-            
-            // Reset training UI
-            document.querySelector('.stop-btn').style.display = 'block';
-            document.getElementById('back-btn').style.display = 'none';
-            trainingProgress = 0;
-            trainedTopics = [];
-            document.getElementById('training-progress').style.width = '0%';
-            document.getElementById('training-progress').textContent = '0%';
-            document.getElementById('learning-topics').innerHTML = '';
-            document.getElementById('topics-count').textContent = '0';
-            document.getElementById('time-remaining').textContent = '--:--';
-            document.getElementById('training-status-text').textContent = 
-                'Connecting to internet and learning...';
+        function updateConnectionStatus(connected) {
+            const status = document.getElementById('connection-status');
+            if (connected) {
+                status.textContent = '✓ Connected';
+                status.className = 'connection-status connected';
+            } else {
+                status.textContent = '✗ Disconnected';
+                status.className = 'connection-status disconnected';
+                addMessage('⚠️ Ollama is not running. Please start Ollama on your computer first.', 'ai');
+            }
         }
 
-        function generateResponse(userMessage) {
-            const message = userMessage.toLowerCase().trim();
-            
-            // Check trained knowledge first
-            if (aiKnowledge.trained) {
-                for (let keyword of aiKnowledge.trained.keywords) {
-                    if (message.includes(keyword)) {
-                        return aiKnowledge.trained.responses.trained;
-                    }
-                }
-            }
-            
-            // Check for keywords in different categories
-            for (let category in aiKnowledge) {
-                if (category === 'trained') continue;
-                
-                const knowledge = aiKnowledge[category];
-                
-                for (let keyword of knowledge.keywords) {
-                    if (message.includes(keyword)) {
-                        // Return appropriate response based on keyword
-                        for (let key in knowledge.responses) {
-                            if (message.includes(key)) {
-                                return knowledge.responses[key];
-                            }
-                        }
-                        // Return general response for category
-                        return knowledge.responses[Object.keys(knowledge.responses)[0]];
-                    }
-                }
-            }
-
-            // Context-based responses
-            if (message.includes('thank') || message.includes('thanks')) {
-                return `You're welcome! Feel free to ask me anything else. I'm here to help you learn and succeed! 😊`;
-            }
-
-            if (message.includes('example')) {
-                return `I'd be happy to provide examples! Please specify what topic you need examples for:
-                
-Common topics:
-- Math problems
-- Science concepts
-- Code snippets
-- Essay examples
-- Grammar rules
-
-What would you like an example of?`;
-            }
-
-            if (message.includes('practice') || message.includes('problem')) {
-                return `Here's a practice problem for you:
-
-Math Example:
-If a triangle has angles of 45° and 60°, what's the third angle?
-(Hint: All angles in a triangle sum to 180°)
-
-Try solving it, and I can walk you through the solution if needed!
-
-Or let me know what subject you'd like to practice.`;
-            }
-
-            if (message.includes('difficult') || message.includes('hard') || message.includes('confused')) {
-                return `Don't worry! Learning new things can be challenging. Here's what we can do:
-
-1. Break it into smaller parts
-2. Start with simple examples
-3. Build up to complex ideas
-4. Practice step-by-step
-
-What specific part is giving you trouble? Let me explain it differently for you.`;
-            }
-
-            // Default response
-            return `That's an interesting question! 🤔
-
-To give you the best answer, please be more specific. You can ask about:
-- Specific topics (e.g., "photosynthesis", "calculus", "Python")
-- Concepts you want explained
-- Help with homework or code
-- Writing and grammar tips
-- Practice problems
-- Study strategies
-
-What would you like help with?`;
+        function changeModel() {
+            currentModel = document.getElementById('model-select').value;
+            addMessage(`Model changed to ${currentModel}. Ready to chat!`, 'ai');
         }
 
-        function sendMessage() {
+        async function sendMessage() {
+            if (!isConnected) {
+                addMessage('❌ Connection error: Ollama is not running. Start Ollama and refresh the page.', 'ai');
+                return;
+            }
+
             const input = document.getElementById('user-input');
             const message = input.value.trim();
 
             if (!message) return;
 
-            // Add user message to chat
+            // Add user message
             addMessage(message, 'user');
-            chatHistory.push({ role: 'user', message });
-
             input.value = '';
 
             // Show typing indicator
             showTypingIndicator();
 
-            // Simulate thinking time (200-1000ms)
-            setTimeout(() => {
+            try {
+                // Call Ollama API
+                const response = await fetch(OLLAMA_API, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        model: currentModel,
+                        messages: [
+                            {
+                                role: 'user',
+                                content: message
+                            }
+                        ],
+                        stream: false
+                    })
+                });
+
                 removeTypingIndicator();
-                const response = generateResponse(message);
-                addMessage(response, 'ai');
-                chatHistory.push({ role: 'ai', message: response });
-            }, Math.random() * 800 + 200);
+
+                if (!response.ok) {
+                    throw new Error('API Error: ' + response.statusText);
+                }
+
+                const data = await response.json();
+                const aiResponse = data.message.content;
+
+                // Add AI response
+                addMessage(aiResponse, 'ai');
+
+            } catch (error) {
+                removeTypingIndicator();
+                console.error('Error:', error);
+                addMessage(`❌ Error: ${error.message}\n\nMake sure Ollama is running with: ollama serve`, 'ai');
+            }
         }
 
         function addMessage(text, sender) {
@@ -1308,15 +403,7 @@ What would you like help with?`;
 
             const content = document.createElement('div');
             content.className = 'message-content';
-            
-            // Format code blocks
-            if (text.includes('```')) {
-                content.innerHTML = text
-                    .replace(/```([^\`]*?)```/g, '<div class="code-block">$1</div>')
-                    .replace(/\n/g, '<br>');
-            } else {
-                content.innerHTML = text.replace(/\n/g, '<br>');
-            }
+            content.textContent = text;
 
             messageDiv.appendChild(avatar);
             messageDiv.appendChild(content);
@@ -1351,30 +438,16 @@ What would you like help with?`;
             if (indicator) indicator.remove();
         }
 
-        function clearChat() {
-            if (confirm('Clear all messages? This cannot be undone.')) {
-                document.getElementById('chat-area').innerHTML = `
-                    <div class="message ai">
-                        <div class="message-avatar">🤖</div>
-                        <div class="message-content">
-                            Hello again! I've cleared our chat history. What would you like to learn about today?
-                        </div>
-                    </div>
-                `;
-                chatHistory = [];
-            }
-        }
-
         function handleKeyPress(event) {
             if (event.key === 'Enter') {
                 sendMessage();
             }
         }
 
-        // Focus input on load
+        // Check connection periodically
+        setInterval(checkConnection, 5000);
+
         document.getElementById('user-input').focus();
     </script>
 </body>
 </html>
-
-
